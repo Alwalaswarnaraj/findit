@@ -5,6 +5,8 @@ node_modules
 dist
 coverage
 .vscode
+.env
+*.log
 src/__tests__/*.test.ts
 src/__tests__/*.test.js
 src/__tests__/*.test.tsx
