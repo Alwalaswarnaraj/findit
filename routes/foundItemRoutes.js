@@ -1,0 +1,18 @@
+// // routes/foundItemRoutes.js
+import express from 'express';
+import { createFoundItem, getFoundItemById, getFoundItems, updateFoundItem, deleteFoundItem, getMyFoundItems} from '../controllers/foundItemController.js'
+import upload from '../middleware/upload.js';
+
+
+const foundItemRouter = express.Router();
+
+// // Public routes
+foundItemRouter.route('/')
+    .get(getFoundItems)     // GET all found items
+    .post(upload.single('image'), createFoundItem);       // POST a new found item
+foundItemRouter.get('/:id', getFoundItemById);    // GET one found item by ID
+foundItemRouter.put('/:id', updateFoundItem);     // PUT to update the item
+foundItemRouter.delete('/:id', deleteFoundItem);  // DELETE to delete the item
+foundItemRouter.get('/mine', getMyFoundItems);
+
+export default foundItemRouter;
