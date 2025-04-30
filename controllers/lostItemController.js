@@ -6,8 +6,8 @@ import LostItem from '../models/LostItems.js';
 // @access  Public (later can make protected)
 export const createLostItem = async (req, res) => {
   try {
-    const { title, description, image, location, dateLost, contactInfo } = req.body;
-
+    const { title, description, location, dateLost, contactInfo } = req.body;
+    const image = req.file?.path;
     const lostItem = new LostItem({
       title,
       description,
@@ -85,8 +85,16 @@ export const getLostItems = async (req, res) => {
 // @route   GET /api/lost/:id
 // @access  Public
 export const getLostItemById = async (req, res) => {
+  const { id } = req.params;
+
+  // Check if the provided ID is a valid ObjectId
+  // if (!mongoose.Types.ObjectId.isValid(id)) {
+  //   return res.status(400).json({ message: 'Invalid Item ID format' });
+  // }
+
   try {
-    const lostItem = await LostItem.findById(req.params.id);
+    const lostItem = await LostItem.findById(id).populate('user', 'name email'); // Populate user details if needed
+    // const lostItem = await LostItem.findById(id); // If you don't need user details
 
     if (!lostItem) {
       return res.status(404).json({ message: 'Lost Item not found' });
@@ -94,7 +102,7 @@ export const getLostItemById = async (req, res) => {
 
     res.json(lostItem);
   } catch (error) {
-    console.error('Error fetching lost item:', error);
+    console.error('Error fetching lost item:', error);  
     res.status(500).json({ message: 'Server Error' });
   }
 };
