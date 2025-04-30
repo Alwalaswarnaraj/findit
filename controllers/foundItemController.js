@@ -17,7 +17,7 @@ export const createFoundItem = async (req, res) => {
       location,
       dateFound,
       contactInfo,
-      user: req.user ? req.user._id : "661fd9b2534f86a9ab3123ef", // or 'user' depending on your schema
+      user: req.user._id  , // or 'user' depending on your schema
     });
 
     const savedItem = await foundItem.save();

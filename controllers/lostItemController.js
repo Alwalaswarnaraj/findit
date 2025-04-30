@@ -15,7 +15,7 @@ export const createLostItem = async (req, res) => {
       location,
       dateLost,
       contactInfo,
-      user: req.user ? req.user._id : "603c72ef9f1b2b001f8e4b2b", // if you have authMiddleware later
+      user: req.user._id, // if you have authMiddleware later
     });
 
     const savedItem = await lostItem.save();
