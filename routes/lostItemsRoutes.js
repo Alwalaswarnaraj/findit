@@ -7,11 +7,11 @@ import { protect } from '../middleware/authmiddleware.js';
 const lostItemRouter = express.Router();
 
 // Public routes
-lostItemRouter.get('/', getLostItems);          // GET all lost items
-lostItemRouter.get('/:id', getLostItemById);    // GET one lost item by ID
 lostItemRouter.post('/',protect, upload.single('image'), createLostItem);       // POST a new lost item (can be protected later)
+lostItemRouter.get('/', getLostItems);          // GET all lost items
+lostItemRouter.get('/mine',protect, getMyLostItems);
+lostItemRouter.get('/:id', getLostItemById);    // GET one lost item by ID
 lostItemRouter.put('/:id', updateLostItem);     // PUT to update the lost item
 lostItemRouter.delete('/:id', deleteLostItem);  // DELETE the item
-lostItemRouter.get('/mine', getMyLostItems);
 
 export default lostItemRouter;

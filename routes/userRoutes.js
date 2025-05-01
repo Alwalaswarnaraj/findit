@@ -16,6 +16,7 @@ import { registerUser, loginUser, getUserProfile } from '../controllers/userCon.
 import { protect } from '../middleware/authmiddleware.js'; // we'll create this middleware next
 import { forgotPassword } from '../controllers/userCon.js'; // we'll create this controller next
 import { resetPassword } from '../controllers/userCon.js';
+import User from '../models/User.js'; // Assuming you have a User model defined in models/User.js
 
 const userRouter = express.Router();
 
@@ -27,5 +28,14 @@ userRouter.post('/reset-password/:token', resetPassword); // Assuming you have a
 
 // Protected routes
 userRouter.get('/profile', protect, getUserProfile);
+
+userRouter.get('/me', protect, async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id).select('-password');
+      res.json(user);
+    } catch (err) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  });
 
 export default userRouter;

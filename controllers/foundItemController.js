@@ -162,12 +162,13 @@ export const deleteFoundItem = async (req, res) => {
 // @desc    Get found items created by the logged-in user
 // @route   GET /api/found/mine
 // @access  Private
+// controllers/foundItemController.js
 export const getMyFoundItems = async (req, res) => {
   try {
     const items = await FoundItem.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.json(items);
   } catch (error) {
-    console.error('Error fetching user\'s found items:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Failed to fetch your found items', error });
   }
 };
+

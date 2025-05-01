@@ -8,21 +8,22 @@ export const createLostItem = async (req, res) => {
   try {
     const { title, description, location, dateLost, contactInfo } = req.body;
     const image = req.file?.path;
+
     const lostItem = new LostItem({
       title,
       description,
-      image,
       location,
       dateLost,
       contactInfo,
-      user: req.user._id, // if you have authMiddleware later
+      image,
+      user: req.user._id,
     });
 
     const savedItem = await lostItem.save();
     res.status(201).json(savedItem);
   } catch (error) {
-    console.error('Error creating lost item:', error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error creating lost item:', error.message);
+    res.status(500).json({ message: error.message || 'Server Error' });
   }
 };
 
@@ -167,13 +168,14 @@ export const updateLostItem = async (req, res) => {
   // @desc    Get lost items created by the logged-in user
 // @route   GET /api/lost/mine
 // @access  Private
+// controllers/lostItemController.js
 export const getMyLostItems = async (req, res) => {
-    try {
-      const items = await LostItem.find({ user: req.user._id }).sort({ createdAt: -1 });
-      res.json(items);
-    } catch (error) {
-      console.error('Error fetching user\'s lost items:', error);
-      res.status(500).json({ message: 'Server error' });
-    }
-  };
+  try {
+    const items = await LostItem.find({ user: req.user._id }).sort({ createdAt: -1 });
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch your lost items', error });
+  }
+};
+
   

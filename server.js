@@ -3,35 +3,40 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import connectDB from './config/db.js';
 import userRouter from './routes/userRoutes.js';
+import http from 'http';
+//import { Server } from 'socket.io';  // Remove this import
 
-import lostItemRouter from './routes/lostItemsRoutes.js'
-import foundItemRouter from './routes/foundItemRoutes.js'
+import lostItemRouter from './routes/lostItemsRoutes.js';
+import foundItemRouter from './routes/foundItemRoutes.js';
+import feedRoutes from './routes/feed.js';
+import conversationRoutes from './routes/conversationRoutes.js';
+import { initializeSocketIO } from './controllers/conversationCon.js'; // Import initializeSocketIO
+// import { deleteOldConversations } from './controllers/conversationCon.js'; // Import deleteOldConversations
 
-config(); //loads environmental variables
+config();
 
-const app = express()
+const app = express();
+app.use(cors());
+app.use(json());
 
+app.get('/', (req, res) => {
+  res.send('Find It backend running');
+});
 
-app.use(cors())
-app.use(json())
+connectDB(process.env.MONGO_URI);
 
-
-app.get('/', (req, res)=>{
-    res.send('find it backend running');
-})
-
-
-
-// database connection
-connectDB(process.env.MONGO_URI)
-
-// Use user routes for any requests starting with /api/users
 app.use('/api/users', userRouter);
 app.use('/api/found', foundItemRouter);
-app.use('/api/lost', lostItemRouter)
+app.use('/api/lost', lostItemRouter);
+app.use('/api/feed', feedRoutes);
+app.use('/api/conversations', conversationRoutes);
 
-// start server``
+const server = http.createServer(app);
+
+initializeSocketIO(server);
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, ()=>{
-    console.log(`server is listening on ${PORT}`)
-})
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+//   deleteOldConversations(); // Start deleting old conversations
+});

@@ -1,11 +1,11 @@
-package.json
-package-lock.json
 README.md
 node_modules
 dist
 coverage
-.vscode
 .env
+*.env
+*.env.local
+.vscode
 *.log
 src/__tests__/*.test.ts
 src/__tests__/*.test.js

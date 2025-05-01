@@ -1,0 +1,38 @@
+{
+  "name": "findit",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Alwalaswarnaraj/findit#readme",
+  "bugs": {
+    "url": "https://github.com/Alwalaswarnaraj/findit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Alwalaswarnaraj/findit.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.1",
+    "multer": "^1.4.5-lts.2",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^6.10.1",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

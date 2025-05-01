@@ -9,6 +9,14 @@ const conversationSchema = new mongoose.Schema(
         required: true,
       }
     ],
+    messages: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message'
+    }],
+    deleted: { // Add deleted field
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

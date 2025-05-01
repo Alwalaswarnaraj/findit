@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';  // For sending emails
 import crypto from 'crypto';         // For generating reset tokens
+import { emailUser, emailPass } from "../config/config.js";
 
 // REGISTER USER
 export const registerUser = async (req, res) => {
@@ -114,13 +115,13 @@ export const forgotPassword = async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'allwalaswarnaraj',
-                pass: '#@1234567890' // Use environment variables for security
+                user: emailUser, // Use environment variables for security
+                pass: emailPass // Use environment variables for security
             }
         });
 
         const mailOptions = {
-            from: 'allwalaswarnaraj541@',
+            from: emailUser,
             to: user.email,
             subject: 'Password Reset Request',
             text: `Click on the link to reset your password: ${resetLink}`
@@ -135,12 +136,18 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
+
 // RESET PASSWORD
 export const resetPassword = async (req, res) => {
-    const { resetToken, password } = req.body;
+    const { password } = req.body;
+    const resetToken = req.params.token; // <-- from URL
 
     try {
-        const user = await User.findOne({ resetToken, resetTokenExpiration: { $gt: Date.now() } });
+        const user = await User.findOne({
+            resetToken,
+            resetTokenExpiration: { $gt: Date.now() }
+        });
+
         if (!user) {
             return res.status(400).json({ message: 'Invalid or expired reset token' });
         }

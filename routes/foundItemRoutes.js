@@ -10,9 +10,9 @@ const foundItemRouter = express.Router();
 // // Public routes
 foundItemRouter.route('/').get(getFoundItems);     // GET all found items
 foundItemRouter.post('/', protect, upload.single('image'), createFoundItem);       // POST a new found item
+foundItemRouter.get('/mine',protect, getMyFoundItems);
 foundItemRouter.get('/:id', getFoundItemById);    // GET one found item by ID
 foundItemRouter.put('/:id', updateFoundItem);     // PUT to update the item
 foundItemRouter.delete('/:id', deleteFoundItem);  // DELETE to delete the item
-foundItemRouter.get('/mine', getMyFoundItems);
 
 export default foundItemRouter;
