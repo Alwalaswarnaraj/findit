@@ -7,7 +7,8 @@ let io;
 export const initializeSocketIO = (server) => {
     io = new Server(server, {
         cors: {
-            origin: "http://localhost:3000", // Adjust if needed
+            origin: ["http://localhost:3000","https://findit-frontend-theta.vercel.app"], // Adjust if needed
+            credentials: true,
             methods: ["GET", "POST"]
         }
     });
