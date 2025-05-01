@@ -4,6 +4,7 @@ import { config } from 'dotenv';
 import connectDB from './config/db.js';
 import userRouter from './routes/userRoutes.js';
 import http from 'http';
+import path from 'path';
 //import { Server } from 'socket.io';  // Remove this import
 
 import lostItemRouter from './routes/lostItemsRoutes.js';
@@ -45,10 +46,10 @@ app.use('/api/conversations', conversationRoutes);
 
 const server = http.createServer(app);
 
-app.use(express.static(path.join(__dirname, "../client/build")));
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
-});
+// app.use(express.static(path.join(__dirname, "../client/build")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../client/build/index.html"));
+// });
 
 initializeSocketIO(server);
 
