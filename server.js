@@ -17,19 +17,19 @@ import { initializeSocketIO } from './controllers/conversationCon.js'; // Import
 config();
 
 const app = express();
-// const allowedOrigins=[
-//     "https://findit-frontend-theta.vercel.app",
-//     // "http://localhost:3000",
-// ];
+const allowedOrigins=[
+    // "https://findit-frontend-theta.vercel.app",
+    "http://localhost:3000",
+];
 
 
-// app.use(cors({
-//     origin: allowedOrigins,
-//     credentials : true,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//     preflightContinue: false,
-//     optionsSuccessStatus: 204 // For legacy browser support
-// }));
+app.use(cors({
+    origin: allowedOrigins,
+    credentials : true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204 // For legacy browser support
+}));
 app.use(cors());
 app.use(json());
 
