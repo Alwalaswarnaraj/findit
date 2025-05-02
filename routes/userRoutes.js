@@ -24,7 +24,7 @@ const userRouter = express.Router();
 userRouter.post('/register', registerUser);
 userRouter.post('/login', loginUser);
 userRouter.post('/forgot-password', forgotPassword);
-userRouter.post('/reset-password/:token', resetPassword); // Assuming you have a token-based reset password
+userRouter.post('/reset-password/:token',protect, resetPassword); // Assuming you have a token-based reset password
 
 // Protected routes
 userRouter.get('/profile', protect, getUserProfile);
