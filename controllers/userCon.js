@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';  // For sending emails
 import crypto from 'crypto';         // For generating reset tokens
-import { emailUser, emailPass } from "../config/config.js";
+import { emailUser, emailPass, frontendUrl } from "../config/config.js";
 
 // REGISTER USER
 export const registerUser = async (req, res) => {
@@ -109,7 +109,7 @@ export const forgotPassword = async (req, res) => {
         await user.save();
 
         // Create a reset link
-        const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
+        const resetLink = `${frontendUrl}/reset-password/${resetToken}`;
 
         // Send reset link via email
         const transporter = nodemailer.createTransport({
