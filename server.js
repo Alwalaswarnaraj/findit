@@ -18,8 +18,8 @@ config();
 
 const app = express();
 const allowedOrigins=[
-    "http://localhost:3000",
     "https://findit-frontend-theta.vercel.app",
+    // "http://localhost:3000",
 ];
 
 
