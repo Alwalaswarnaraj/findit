@@ -13,6 +13,6 @@ foundItemRouter.post('/', protect, upload.single('image'), createFoundItem);    
 foundItemRouter.get('/mine',protect, getMyFoundItems);
 foundItemRouter.get('/:id', getFoundItemById);    // GET one found item by ID
 foundItemRouter.put('/:id', updateFoundItem);     // PUT to update the item
-foundItemRouter.delete('/:id', deleteFoundItem);  // DELETE to delete the item
+foundItemRouter.delete('/:id', protect, deleteFoundItem);  // DELETE to delete the item
 
 export default foundItemRouter;

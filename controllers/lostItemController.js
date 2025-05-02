@@ -1,5 +1,6 @@
 // controllers/lostItemController.js
 import LostItem from '../models/LostItems.js';
+import mongoose from 'mongoose';
 
 // @desc    Create a new lost item
 // @route   POST /api/lost
@@ -145,6 +146,11 @@ export const updateLostItem = async (req, res) => {
   // @access  Private
   export const deleteLostItem = async (req, res) => {
     try {
+      // Validate if the ID is a valid Object ID
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ message: 'Invalid Lost Item ID' });
+      }
+  
       const item = await LostItem.findById(req.params.id);
   
       if (!item) {
@@ -153,17 +159,23 @@ export const updateLostItem = async (req, res) => {
   
       // Ownership check
       if (item.user.toString() !== req.user._id.toString()) {
-        return res.status(401).json({ message: 'Not authorized' });
+        return res.status(401).json({ message: 'Not authorized to delete this item' });
       }
   
-      await item.deleteOne();
-      res.json({ message: 'Lost item deleted' });
+      const result = await LostItem.deleteOne({ _id: req.params.id });
+  
+      if (result.deletedCount === 1) {
+        res.json({ message: 'Lost item deleted successfully' });
+      } else {
+        // This case might happen if the item was found but not deleted
+        res.status(404).json({ message: 'Lost item not found (deletion failed)' });
+      }
+  
     } catch (error) {
       console.error('Error deleting lost item:', error);
-      res.status(500).json({ message: 'Server error' });
+      res.status(500).json({ message: 'Server error', error: error.message }); // Include error message for debugging
     }
   };
-  
 
   // @desc    Get lost items created by the logged-in user
 // @route   GET /api/lost/mine

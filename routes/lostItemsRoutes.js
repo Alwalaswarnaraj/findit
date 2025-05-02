@@ -12,6 +12,6 @@ lostItemRouter.get('/', getLostItems);          // GET all lost items
 lostItemRouter.get('/mine',protect, getMyLostItems);
 lostItemRouter.get('/:id', getLostItemById);    // GET one lost item by ID
 lostItemRouter.put('/:id', updateLostItem);     // PUT to update the lost item
-lostItemRouter.delete('/:id', deleteLostItem);  // DELETE the item
+lostItemRouter.delete('/:id',protect, deleteLostItem);  // DELETE the item
 
 export default lostItemRouter;
