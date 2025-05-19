@@ -13,10 +13,13 @@ import feedRoutes from './routes/feed.js';
 import conversationRoutes from './routes/conversationRoutes.js';
 import { initializeSocketIO } from './controllers/conversationCon.js'; // Import initializeSocketIO
 // import { deleteOldConversations } from './controllers/conversationCon.js'; // Import deleteOldConversations
-
+import deleteUnverifiedUsers from './cronJobs/cleanupUnverifiedUsers.js'; // Import the cron job
+import otpvericationRoute from './routes/optverificationRoutes.js';
 config();
 
 const app = express();
+deleteUnverifiedUsers();
+
 const allowedOrigins=[
     "https://findit-frontend-theta.vercel.app",
     "http://localhost:3000",
@@ -44,6 +47,7 @@ app.use('/api/found', foundItemRouter);
 app.use('/api/lost', lostItemRouter);
 app.use('/api/feed', feedRoutes);
 app.use('/api/conversations', conversationRoutes);
+app.use('/api/otp', otpvericationRoute);
 
 // const server = http.createServer(app);
 

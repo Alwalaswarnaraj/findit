@@ -4,76 +4,163 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';  // For sending emails
 import crypto from 'crypto';         // For generating reset tokens
 import { emailUser, emailPass, frontendUrl } from "../config/config.js";
+import validator from 'validator'; // For validating email format
+import crypto from 'crypto'; // For generating secure tokens
 
-// REGISTER USER
+
+// Utility to send OTP email
+const sendEmailWithOTP = async (email, otp) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: emailUser, // your email
+      pass: emailPass   , // your email password or app password
+    },
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: 'Verify your email - FindIt',
+    html: `<p>Your OTP is <b>${otp}</b>. It is valid for 10 minutes.</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// // REGISTER USER
+// export const registerUser = async (req, res) => {
+//     const { name, email, phone, password } = req.body;
+
+//     try {
+//         // Check if user already exists
+//         const userExist = await User.findOne({ email });
+//         if (userExist) {
+//             return res.status(400).json({
+//                 message: "User already exists"
+//             });
+//         }
+
+//         // Hash password
+//         const hashedPassword = await bcrypt.hash(password, 10);
+
+//         // Create new user
+//         const user = new User({
+//             name,
+//             email,
+//             phone,
+//             password: hashedPassword
+//         });
+
+//         await user.save();
+
+//         res.status(201).json({ message: 'User created successfully', user });
+//     } catch (error) {
+//         console.error('Registration Error:', error);
+//         res.status(500).json({ message: 'Server Error', error });
+//     }
+// };
+
 export const registerUser = async (req, res) => {
-    const { name, email, phone, password } = req.body;
+  const { name, email, phone, password } = req.body;
 
-    try {
-        // Check if user already exists
-        const userExist = await User.findOne({ email });
-        if (userExist) {
-            return res.status(400).json({
-                message: "User already exists"
-            });
-        }
+  // Validate required fields
+  if (!name || !email || !phone || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
 
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+  // Validate email format
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ message: 'Invalid email format' });
+  }
 
-        // Create new user
-        const user = new User({
-            name,
-            email,
-            phone,
-            password: hashedPassword
-        });
+  // Validate Indian phone number format (or adjust as needed)
+  const isValidPhone = /^[6-9]\d{9}$/.test(phone);
+  if (!isValidPhone) {
+    return res.status(400).json({ message: 'Invalid phone number format' });
+  }
 
-        await user.save();
-
-        res.status(201).json({ message: 'User created successfully', user });
-    } catch (error) {
-        console.error('Registration Error:', error);
-        res.status(500).json({ message: 'Server Error', error });
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
     }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate OTP and expiry
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Create user
+    const newUser = new User({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+      emailOTP: otp,
+      emailOTPExpiry: otpExpiry,
+      emailVerified: false,
+    });
+
+    await newUser.save();
+
+    // Send OTP email
+    await sendEmailWithOTP(email, otp);
+
+    res.status(201).json({
+      message: 'User registered. OTP sent to email for verification.',
+    });
+  } catch (error) {
+    console.error('Registration Error:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
 };
 
 // LOGIN USER
 export const loginUser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Check if user exists
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Compare password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
-        }
-
-        // Generate JWT token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '7d'
-        });
-
-        res.status(200).json({
-            token,
-            user: {
-                id: user._id,
-                name: user.name,    // Changed from username to name
-                email: user.email,
-                phone: user.phone   // Added phone also if needed
-            }
-        });
-    } catch (error) {
-        console.error('Login Error:', error);
-        res.status(500).json({ message: 'Server Error' });
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
+
+    // Check if email is verified
+    if (!user.emailVerified) {
+      return res.status(401).json({ message: 'Please verify your email before logging in.' });
+    }
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
+
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      },
+    });
+  } catch (error) {
+    console.error('Login Error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
 };
+
 
 // GET USER PROFILE
 export const getUserProfile = async (req, res) => {
