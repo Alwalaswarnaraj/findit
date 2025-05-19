@@ -5,7 +5,6 @@ import nodemailer from 'nodemailer';  // For sending emails
 import crypto from 'crypto';         // For generating reset tokens
 import { emailUser, emailPass, frontendUrl } from "../config/config.js";
 import validator from 'validator'; // For validating email format
-import crypto from 'crypto'; // For generating secure tokens
 
 
 // Utility to send OTP email

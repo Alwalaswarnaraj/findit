@@ -1,6 +1,6 @@
 // routes/authRoutes.js
 import express from 'express';
-import { registerUser } from '../controllers/registerUser.js';
+import { registerUser } from '../controllers/userCon.js';
 import { verifyEmailOTP } from '../controllers/verifyEmailOTP.js';
 
 const otpvericationRoute = express.Router();
