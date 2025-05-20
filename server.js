@@ -47,7 +47,7 @@ app.use('/api/found', foundItemRouter);
 app.use('/api/lost', lostItemRouter);
 app.use('/api/feed', feedRoutes);
 app.use('/api/conversations', conversationRoutes);
-app.use('/api/otp', otpvericationRoute);
+// app.use('/api/otp', otpvericationRoute);
 
 // const server = http.createServer(app);
 

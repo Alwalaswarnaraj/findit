@@ -5,7 +5,7 @@ import { verifyEmailOTP } from '../controllers/verifyEmailOTP.js';
 
 const otpvericationRoute = express.Router();
 
-otpvericationRoute.post('/register', registerUser);
-otpvericationRoute.post('/verify-otp', verifyEmailOTP);
+// otpvericationRoute.post('/register', registerUser);
+// otpvericationRoute.post('/verify-otp', verifyEmailOTP);
 
 export default otpvericationRoute;

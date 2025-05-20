@@ -17,7 +17,7 @@ import { protect } from '../middleware/authmiddleware.js'; // we'll create this 
 import { forgotPassword } from '../controllers/userCon.js'; // we'll create this controller next
 import { resetPassword } from '../controllers/userCon.js';
 import User from '../models/User.js'; // Assuming you have a User model defined in models/User.js
-
+import { verifyEmailOTP } from '../controllers/verifyEmailOTP.js';
 const userRouter = express.Router();
 
 // Public routes
@@ -25,7 +25,7 @@ userRouter.post('/register', registerUser);
 userRouter.post('/login', loginUser);
 userRouter.post('/forgot-password', forgotPassword);
 userRouter.post('/reset-password/:token',protect, resetPassword); // Assuming you have a token-based reset password
-
+userRouter.post('/verify-otp', verifyEmailOTP);
 // Protected routes
 userRouter.get('/profile', protect, getUserProfile);
 
